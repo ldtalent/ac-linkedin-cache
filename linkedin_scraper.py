@@ -18,7 +18,7 @@ def initial_setup():
   # driver = webdriver.Chrome(PATH, chrome_options=options) # anisha version
   driver = webdriver.Chrome(chrome_options=options) # gobi version
   driver.get(URL)
-  time.sleep(15) # 80
+  time.sleep(80) # 80
 
   auto_scroll(driver)
 
