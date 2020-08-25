@@ -18,7 +18,7 @@ def initial_setup():
   # driver = webdriver.Chrome(PATH, chrome_options=options) # anisha version
   driver = webdriver.Chrome(chrome_options=options) # gobi version
   driver.get(URL)
-  time.sleep(80)
+  time.sleep(15) # 80
 
   auto_scroll(driver)
 
@@ -161,7 +161,7 @@ def scraper(driver, connection_urls):
           count += 1
 
       # To scrape only 30 contacts on a single run
-      if count >= 30:
+      if count >= 3: #30
         break
       
 if __name__ == "__main__":
