@@ -40,7 +40,7 @@ def scraper(driver, connection_urls):
   with open('linkedin_cache.csv', mode, newline='') as csvfile: # gobi version
     writer = csv.writer(csvfile)
     if mode == 'w':
-      writer.writerow(['name', 'title', 'email', 'profile_link', 'website', 'phone', 'address', 'birthday', 'about', 'location', 'experiences', 'education'])
+      writer.writerow(['name', 'title', 'email', 'profile_link', 'website', 'phone', 'address', 'location', 'birthday', 'about', 'experiences', 'education'])
 
     # To count number of contacts to scrape on a single run
     count = 0
@@ -84,7 +84,7 @@ def scraper(driver, connection_urls):
         pass
 
       try:
-        address = modal.find_element_by_class_name('ci-address').find_element_by_tag_name('a')
+        address = modal.find_element_by_class_name('ci-address').find_element_by_tag_name('a').text
       except:
         pass
 
@@ -147,7 +147,7 @@ def scraper(driver, connection_urls):
       
       # To check duplicate entry and skip the contact if duplicate else save it to csv
       if (mode == 'w'):
-        writer.writerow([name, title, email, profile_link, website, phone, address, birthday, about, location, experiences, education])
+        writer.writerow([name, title, email, profile_link, website, phone, address, location, birthday, about, experiences, education])
         print('New contact entry: ', name)
         count += 1
       else:
@@ -156,7 +156,7 @@ def scraper(driver, connection_urls):
         if ( ((df['name'] == name) & (df['profile_link'] == profile_link)).any() ):
           print('Skipped duplicate contact: ', name)
         else:
-          writer.writerow([name, title, email, profile_link, website, phone, address, birthday, about, location, experiences, education])
+          writer.writerow([name, title, email, profile_link, website, phone, address, location, birthday, about, experiences, education])
           print('New contact entry: ', name)
           count += 1
 
