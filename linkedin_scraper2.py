@@ -68,12 +68,14 @@ def scraper(driver, connection_urls):
                 print('name', name, 'title', title, 'location', location)
                 writer.writerow([name, title, email, profile_link, phone, location])
                 f1.write(profile_link + '\n')
+                cached_cnt = cached_cnt + 1
+                print(cached_cnt, 'cached', profile_link)
+                '''
                 ans = input('Do you want to continue? y/n:')
                 if ans.lower() != 'y':
                     exit(0)
-                cached_cnt = cached_cnt + 1
-                print(cached_cnt, 'cached', profile_link)
-                time.sleep(10)
+                '''
+                time.sleep(20)
             except Exception as e:
                 print("Unable to get details for", url)
 
