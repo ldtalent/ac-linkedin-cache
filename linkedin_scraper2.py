@@ -9,13 +9,13 @@ def scraper(driver, connection_urls):
     # To check if there is csv file and select the mode to write or append csv accordingly
     global cached_cnt
     csv_files = list(glob.glob("*.csv"))
-    if ('linkedin_cache.csv' in csv_files):
+    if 'linkedin_cache.csv' in csv_files:
         mode = 'a'
     else:
         mode = 'w'
 
     # with open('linkedin_cache.csv', mode , encoding='UTF-16', newline='') as csvfile: # anisha version
-    with open('linkedin_cache.csv', mode, newline='') as csvfile: # gobi version
+    with open('linkedin_cache.csv', mode, newline='') as csvfile:  # gobi version
         writer = csv.writer(csvfile)
         if mode == 'w':
             writer.writerow(['name', 'title', 'email', 'profile_link', 'phone', 'location'])
@@ -44,13 +44,13 @@ def scraper(driver, connection_urls):
 
                 try:
                     email = modal.find_element_by_class_name('ci-email').find_element_by_tag_name('a').text
-                except Exception as e:
+                except Exception:
                     pass
 
                 try:
                     phone_nums = modal.find_element_class_name('ci-phone').find_elements_by_tag_name('li')
                     phone = [num.text for num in phone_nums]
-                except Exception as e:
+                except Exception:
                     pass
                 # To close contact info modal
                 modal.find_element_by_tag_name('button').click()
@@ -76,7 +76,7 @@ def scraper(driver, connection_urls):
                     exit(0)
                 '''
                 time.sleep(20)
-            except Exception as e:
+            except Exception:
                 print("Unable to get details for", url)
 
 
@@ -98,7 +98,7 @@ options = webdriver.ChromeOptions()
 options.add_argument("--start-maximized")
 
 URL = "https://www.linkedin.com/mynetwork/invite-connect/connections/"
-driver = webdriver.Chrome(chrome_options=options) # gobi version
+driver = webdriver.Chrome(chrome_options=options)  # gobi version
 ans = input("Have you logged into linkedin? ")
 if ans != 'y':
     exit(0)
