@@ -139,7 +139,7 @@ for line in f3:
             f2.write(url + '\n')
         cnt = cnt + 1
         connection_urls.extend(linkedin_urls)
-        if cnt >= 50:
+        if cnt >= 100:
             break
 
 cached_cnt = 0
