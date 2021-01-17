@@ -132,7 +132,8 @@ for line in f3:
         time.sleep(10)
         driver.get(url)
         time.sleep(10)
-        connections = driver.find_elements_by_class_name('search-result__info')
+        # connections = driver.find_elements_by_class_name('search-result__info')
+        connections = driver.find_elements_by_class_name('entity-result__title-text')
         linkedin_urls = [url.find_element_by_tag_name('a').get_attribute('href') for url in connections]
         print(linkedin_urls)
         for url in linkedin_urls:
