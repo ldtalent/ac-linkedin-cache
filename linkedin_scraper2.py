@@ -36,19 +36,34 @@ def scraper(driver, connection_urls):
                 email = phone = location = 'Not mentioned'
 
                 # To click contact info link and open modal
+                '''
                 driver.find_element_by_css_selector("a[data-control-name='contact_see_more']").click()
                 time.sleep(10)
+                '''
+                try:
+                    pb2 = driver.find_element_by_class_name('pb2')
+                    contact_info_link = pb2.find_element_by_tag_name('a')
+                    if contact_info_link.text == 'Contact info':
+                        contact_info_link.click()
+                        time.sleep(10)
+                    else:
+                        print("Unable to get contact details for", url)
+                        continue
+                except Exception:
+                    print("Unable to get contact details for", url)
+                    continue
                 # Extract all information from contact info modal
                 modal = driver.find_element_by_id('artdeco-modal-outlet')
                 profile_link = modal.find_element_by_class_name('ci-vanity-url').find_element_by_tag_name('a').text
-
+                if profile_link in cached_urls:
+                    print('Already cached', profile_link)
+                    continue
                 try:
                     email = modal.find_element_by_class_name('ci-email').find_element_by_tag_name('a').text
                 except Exception:
                     pass
-
                 try:
-                    phone_nums = modal.find_element_class_name('ci-phone').find_elements_by_tag_name('li')
+                    phone_nums = modal.find_element_by_class_name('ci-phone').find_elements_by_tag_name('li')
                     phone = [num.text for num in phone_nums]
                 except Exception:
                     pass
@@ -57,11 +72,22 @@ def scraper(driver, connection_urls):
                 time.sleep(10)
 
                 # Extracting user basic information
-                name = soup.find("li", class_='inline t-24 t-black t-normal break-words').text.strip()
-                title = soup.find("h2", class_='mt1 t-18 t-black t-normal break-words').text.strip()
+                # name = soup.find("li", class_='inline t-24 t-black t-normal break-words').text.strip()
+                div1 = soup.find("div", class_='pv-text-details__left-panel mr5')
+                name = div1.find("h1", class_='text-heading-xlarge inline t-24 v-align-middle break-words').text.strip()
+                # title = soup.find("h2", class_='mt1 t-18 t-black t-normal break-words').text.strip()
+                title = div1.find("div", class_='text-body-medium break-words').text.strip()
+                '''
                 loc_obj = soup.find("li", class_='t-16 t-black t-normal inline-block')
                 if loc_obj:
                     location = soup.find("li", class_='t-16 t-black t-normal inline-block').text.strip()
+                else:
+                    print('No location found for', url)
+                '''
+                loc_obj = div1.find("div", class_='pb2').\
+                    find("span", class_='text-body-small inline t-black--light break-words')
+                if loc_obj:
+                    location = loc_obj.text.strip()
                 else:
                     print('No location found for', url)
 
@@ -142,6 +168,7 @@ for line in f3:
         connection_urls.extend(linkedin_urls)
         if cnt >= 100:
             break
+
 
 cached_cnt = 0
 scraper(driver, connection_urls)
