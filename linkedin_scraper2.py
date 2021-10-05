@@ -72,23 +72,18 @@ def scraper(driver, connection_urls):
                 time.sleep(10)
 
                 # Extracting user basic information
-                # name = soup.find("li", class_='inline t-24 t-black t-normal break-words').text.strip()
-                div1 = soup.find("div", class_='pv-text-details__left-panel mr5')
+                div1 = soup.find("div", class_='pv-text-details__left-panel')
                 name = div1.find("h1", class_='text-heading-xlarge inline t-24 v-align-middle break-words').text.strip()
                 # title = soup.find("h2", class_='mt1 t-18 t-black t-normal break-words').text.strip()
                 title = div1.find("div", class_='text-body-medium break-words').text.strip()
-                '''
-                loc_obj = soup.find("li", class_='t-16 t-black t-normal inline-block')
-                if loc_obj:
-                    location = soup.find("li", class_='t-16 t-black t-normal inline-block').text.strip()
-                else:
-                    print('No location found for', url)
-                '''
-                loc_obj = div1.find("div", class_='pb2').\
-                    find("span", class_='text-body-small inline t-black--light break-words')
-                if loc_obj:
-                    location = loc_obj.text.strip()
-                else:
+                try:
+                    div2 = soup.find("div", class_="pb2 pv-text-details__left-panel")
+                    loc_obj = div2.find("span", class_='text-body-small inline t-black--light break-words')
+                    if loc_obj:
+                        location = loc_obj.text.strip()
+                    else:
+                        print('No location found for', url)
+                except Exception:
                     print('No location found for', url)
 
                 print('name', name, 'title', title, 'location', location)
