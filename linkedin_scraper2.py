@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 import time
 import glob
@@ -29,20 +30,19 @@ def scraper(driver, connection_urls):
                 driver.get(url)
                 time.sleep(10)
                 print('Getting details for', url)
-                content = driver.find_element_by_tag_name('main')
+                # content = driver.find_element_by_tag_name('main')
+                content = driver.find_element(by=By.TAG_NAME, value='main')
                 result = content.get_attribute('innerHTML')
                 soup = BeautifulSoup(result, 'html.parser')
                 # Initialization
                 email = phone = location = 'Not mentioned'
 
                 # To click contact info link and open modal
-                '''
-                driver.find_element_by_css_selector("a[data-control-name='contact_see_more']").click()
-                time.sleep(10)
-                '''
                 try:
-                    pb2 = driver.find_element_by_class_name('pb2')
-                    contact_info_link = pb2.find_element_by_tag_name('a')
+                    # pb2 = driver.find_element_by_class_name('pb2')
+                    pb2 = driver.find_element(by=By.CLASS_NAME, value='pb2')
+                    # contact_info_link = pb2.find_element_by_tag_name('a')
+                    contact_info_link = pb2.find_element(by=By.TAG_NAME, value='a')
                     if contact_info_link.text == 'Contact info':
                         contact_info_link.click()
                         time.sleep(10)
@@ -53,22 +53,30 @@ def scraper(driver, connection_urls):
                     print("Unable to get contact details for", url)
                     continue
                 # Extract all information from contact info modal
-                modal = driver.find_element_by_id('artdeco-modal-outlet')
-                profile_link = modal.find_element_by_class_name('ci-vanity-url').find_element_by_tag_name('a').text
+                # modal = driver.find_element_by_id('artdeco-modal-outlet')
+                modal = driver.find_element(By.ID, 'artdeco-modal-outlet')
+                # profile_link = modal.find_element_by_class_name('ci-vanity-url').find_element_by_tag_name('a').text
+                profile_link = modal.find_element(By.CLASS_NAME, value='ci-vanity-url').\
+                    find_element(by=By.TAG_NAME, value='a').text
                 if profile_link in cached_urls:
                     print('Already cached', profile_link)
                     continue
                 try:
-                    email = modal.find_element_by_class_name('ci-email').find_element_by_tag_name('a').text
+                    # email = modal.find_element_by_class_name('ci-email').find_element_by_tag_name('a').text
+                    email = modal.find_element(By.CLASS_NAME, value='ci-email').\
+                        find_element(by=By.TAG_NAME, value='a').text
                 except Exception:
                     pass
                 try:
-                    phone_nums = modal.find_element_by_class_name('ci-phone').find_elements_by_tag_name('li')
+                    # phone_nums = modal.find_element_by_class_name('ci-phone').find_elements_by_tag_name('li')
+                    phone_nums = modal.find_element(By.CLASS_NAME, value='ci-phone').\
+                        find_elements(By.TAG_NAME, value='li')
                     phone = [num.text for num in phone_nums]
                 except Exception:
                     pass
                 # To close contact info modal
-                modal.find_element_by_tag_name('button').click()
+                # modal.find_element_by_tag_name('button').click()
+                modal.find_element(by=By.TAG_NAME, value='button').click()
                 time.sleep(10)
 
                 # Extracting user basic information
@@ -77,7 +85,7 @@ def scraper(driver, connection_urls):
                 # title = soup.find("h2", class_='mt1 t-18 t-black t-normal break-words').text.strip()
                 title = div1.find("div", class_='text-body-medium break-words').text.strip()
                 try:
-                    div2 = soup.find("div", class_="pb2 pv-text-details__left-panel")
+                    div2 = soup.find("div", class_="pv-text-details__left-panel pb2")
                     loc_obj = div2.find("span", class_='text-body-small inline t-black--light break-words')
                     if loc_obj:
                         location = loc_obj.text.strip()
@@ -120,7 +128,7 @@ options.add_argument("--start-maximized")
 
 URL = "https://www.linkedin.com/mynetwork/invite-connect/connections/"
 driver = webdriver.Chrome(chrome_options=options)  # gobi version
-ans = input("Have you logged into linkedin? ")
+ans = input("Have you logged into linkedin? y/n:")
 if ans != 'y':
     exit(0)
 driver.get(URL)
@@ -131,7 +139,10 @@ search_url = "https://www.linkedin.com/search/results/people/?facetNetwork=%5B%2
 header_line = True
 
 cnt = 0
+linenum = 0
 for line in f3:
+    linenum += 1
+    print('line num in connections.txt', linenum)
     if header_line:
         # Set header_line to False after reading first line
         header_line = False
@@ -153,15 +164,24 @@ for line in f3:
         time.sleep(10)
         driver.get(url)
         time.sleep(10)
-        # connections = driver.find_elements_by_class_name('search-result__info')
-        connections = driver.find_elements_by_class_name('entity-result__title-text')
-        linkedin_urls = [url.find_element_by_tag_name('a').get_attribute('href') for url in connections]
+        # connections = driver.find_elements_by_class_name('entity-result__title-text')
+        connections = driver.find_elements(By.CLASS_NAME, value='entity-result__title-text')
+        # linkedin_urls = [url.find_element_by_tag_name('a').get_attribute('href') for url in connections]
+        linkedin_urls = [url.find_element(by=By.TAG_NAME, value='a').get_attribute('href') for url in connections]
         print(linkedin_urls)
+        new_urls = []
         for url in linkedin_urls:
+            if url in cached_urls:
+                print('Already cached', url)
+                continue
+            new_urls.append(url)
             f2.write(url + '\n')
+        if len(new_urls) == 0:
+            continue
         cnt = cnt + 1
-        connection_urls.extend(linkedin_urls)
-        if cnt >= 100:
+        connection_urls.extend(new_urls)
+        if cnt >= 200:
+            print('Last processed line number', linenum)
             break
 
 
