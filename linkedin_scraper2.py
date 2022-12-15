@@ -39,10 +39,8 @@ def scraper(driver, connection_urls):
 
                 # To click contact info link and open modal
                 try:
-                    # pb2 = driver.find_element_by_class_name('pb2')
-                    pb2 = driver.find_element(by=By.CLASS_NAME, value='pb2')
-                    # contact_info_link = pb2.find_element_by_tag_name('a')
-                    contact_info_link = pb2.find_element(by=By.TAG_NAME, value='a')
+                    pb5 = driver.find_element(by=By.CLASS_NAME, value='pb5')
+                    contact_info_link = pb5.find_element(by=By.TAG_NAME, value='a')
                     if contact_info_link.text == 'Contact info':
                         contact_info_link.click()
                         time.sleep(10)
@@ -85,7 +83,7 @@ def scraper(driver, connection_urls):
                 # title = soup.find("h2", class_='mt1 t-18 t-black t-normal break-words').text.strip()
                 title = div1.find("div", class_='text-body-medium break-words').text.strip()
                 try:
-                    div2 = soup.find("div", class_="pv-text-details__left-panel pb2")
+                    div2 = soup.find("div", class_="pv-text-details__left-panel mt2")
                     loc_obj = div2.find("span", class_='text-body-small inline t-black--light break-words')
                     if loc_obj:
                         location = loc_obj.text.strip()
@@ -127,7 +125,7 @@ options = webdriver.ChromeOptions()
 options.add_argument("--start-maximized")
 
 URL = "https://www.linkedin.com/mynetwork/invite-connect/connections/"
-driver = webdriver.Chrome(chrome_options=options)  # gobi version
+driver = webdriver.Chrome(options=options)  # gobi version
 ans = input("Have you logged into linkedin? y/n:")
 if ans != 'y':
     exit(0)
