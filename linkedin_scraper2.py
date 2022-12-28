@@ -23,8 +23,9 @@ def scraper(driver, connection_urls):
 
         # Scraping
         for url in connection_urls:
+            print('\nProcessing for url', url)
             if url in cached_urls:
-                print('Already cached', url)
+                print('In scraper: Already cached', url)
                 continue
             try:
                 driver.get(url)
@@ -57,7 +58,7 @@ def scraper(driver, connection_urls):
                 profile_link = modal.find_element(By.CLASS_NAME, value='ci-vanity-url').\
                     find_element(by=By.TAG_NAME, value='a').text
                 if profile_link in cached_urls:
-                    print('Already cached', profile_link)
+                    print('In scraper: Already cached profile_link', profile_link, 'for url', url)
                     continue
                 try:
                     # email = modal.find_element_by_class_name('ci-email').find_element_by_tag_name('a').text
@@ -170,13 +171,14 @@ for line in f3:
         new_urls = []
         for url in linkedin_urls:
             if url in cached_urls:
-                print('Already cached', url)
+                print('In main: Already cached', url)
                 continue
             new_urls.append(url)
             f2.write(url + '\n')
         if len(new_urls) == 0:
             continue
         cnt = cnt + 1
+        print(cnt, 'new urls found', len(new_urls))
         connection_urls.extend(new_urls)
         if cnt >= 200:
             print('Last processed line number', linenum)
@@ -184,6 +186,7 @@ for line in f3:
 
 
 cached_cnt = 0
+print('Number of urls to scrape', len(connection_urls))
 scraper(driver, connection_urls)
 f3.close()
 f2.close()
