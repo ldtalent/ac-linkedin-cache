@@ -40,8 +40,11 @@ def scraper(driver, connection_urls):
 
                 # To click contact info link and open modal
                 try:
+                    '''
                     pb5 = driver.find_element(by=By.CLASS_NAME, value='pb5')
                     contact_info_link = pb5.find_element(by=By.TAG_NAME, value='a')
+                    '''
+                    contact_info_link = driver.find_element(By.ID, value="top-card-text-details-contact-info")
                     if contact_info_link.text == 'Contact info':
                         contact_info_link.click()
                         time.sleep(10)
