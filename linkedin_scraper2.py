@@ -173,8 +173,13 @@ for line in f3:
         print(linkedin_urls)
         new_urls = []
         for url in linkedin_urls:
-            if url in cached_urls:
-                print('In main: Already cached', url)
+            print('url cached check for', url)
+            url2 = url
+            index = url2.find('?miniProfile')
+            url2 = url2[:index]
+            url2 = url2.replace('https://www.', '')
+            if url2 in cached_urls:
+                print('In main: Already cached', url2)
                 continue
             new_urls.append(url)
             f2.write(url + '\n')
